@@ -60,7 +60,7 @@
         }
 
         // Check for Layer 1
-        if (doc.layers[0].name !== 'Layer 1') { 
+        if (doc.layers[0].name !== 'Layer 1') {
             alert('Layer 1 is missing')
             return
         }
@@ -147,7 +147,7 @@
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
 
-            if(!repeat) {
+            if (!repeat) {
                 var partMatch = findObjectByProperty(sml, "name", item.name);
                 if (partMatch) {
                     currentColorName = partMatch.color_name
@@ -179,11 +179,11 @@
                 // if (item.filled) {
                 //     item.fillColor = getSwatchColor('Cardinal')
                 // } else {
-                    if (currentColorName) {
-                        item.fillColor = getSwatchColor(currentColorName)
-                    } else {
-                        // alert('empty value', currentColorName)
-                    }
+                if (currentColorName) {
+                    item.fillColor = getSwatchColor(currentColorName)
+                } else {
+                    // alert('empty value', currentColorName)
+                }
 
                 // }
             }
@@ -213,7 +213,7 @@
             var object = array[i];
             // Check if the element has the desired property value
             if (object.hasOwnProperty(propertyName) && object[propertyName] === propertyValue) {
-            return object;
+                return object;
             }
         }
         // If the object is not found, return undefined
@@ -226,6 +226,7 @@
             getOrderData();
         } catch (e) {
             alert("An error occurred in getOrderData: " + e);
+            return;
         }
 
         if (!orderData) {
@@ -242,12 +243,6 @@
             bc = dataParser(orderData.items.builder_customizations);
             roster = dataParser(orderData.items.roster);
             sml = bc.sml;
-
-            // this is used for SVG
-            if (subLayers.length > 0) {
-                colorItems(mainLayer)   
-                return
-            }
 
             // this is used for AI
             if (actualLayers.length > 0) {
@@ -273,8 +268,14 @@
                             }
                         }
                     }
-                }  
-                return
+                }
+                return;
+            }
+
+            // this is used for SVG
+            if (subLayers.length > 0) {
+                colorItems(mainLayer)
+                return;
             }
         } catch (e) {
             alert("An error occurred in colorItems: " + e);
