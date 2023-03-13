@@ -99,8 +99,7 @@
 
     // Panel Copyright.
     p = w.add("panel");
-    p.add("statictext", undefined, "Copyright 2023 - Nico Sevilla");
-    p.add("statictext", undefined, "v1.2.1");
+    p.add("statictext", undefined, "v1.2.1 - Copyright 2023 - Nico Sevilla");
 
 
     // UI ELEMENT EVENT HANDLERS
