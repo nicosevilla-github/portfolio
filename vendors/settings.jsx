@@ -1,5 +1,6 @@
 (function () {
 	//@include "JSXGetURL.0.0.9/JSXGetURL/JSXGetURLLoader.jsx"
+	//@include "json2.js"
 	app.preferences.setBooleanPreference("ShowExternalJSXWarning", false);
 
 	if (!/illustrator/i.test(app.name)) {
@@ -111,7 +112,7 @@
 
 	// Panel Copyright.
 	p = w.add("panel");
-	p.add("statictext", undefined, "v1.2.2 - Copyright 2023 - Nico Sevilla");
+	p.add("statictext", undefined, "v1.2.3 - Copyright 2023 - Nico Sevilla");
 
 	// UI ELEMENT EVENT HANDLERS
 	btnOk.onClick = function () {
@@ -276,17 +277,20 @@
 			var actualLayers = layer1.layers;
 
 			if (multiple) {
+				$.writeln("MULTIPLE");
 				bc = dataParser(orderData.builder_customizations);
 				roster = [];
 
 				// restructure partInfo
 				var info = bc.part_info.parts_info;
+
 				for (var i = 0; i < info.length; i++) {
 					var item = info[i];
-					partInfo.push({ name: item.name, color_name: item.color.name });
+					partInfo.push({ name: item.part, color_name: item.color.name });
 				}
 				sml = partInfo;
 			} else {
+				$.writeln("SINGLE");
 				bc = dataParser(orderData.items.builder_customizations);
 				roster = dataParser(orderData.items.roster);
 				sml = bc.sml;
@@ -296,7 +300,6 @@
 			if (actualLayers.length > 0) {
 				for (var x = 0; x < actualLayers.length; x++) {
 					var subLayer = actualLayers[x];
-					// alert(subLayer.name)
 
 					// Check if the sublayer is an instance of the Layer constructor
 					if (subLayer.typename === "Layer") {
@@ -305,14 +308,19 @@
 							var path = paths[s];
 							//  we are using subLayer.name instead of path.name
 							var res = findObjectByProperty(sml, "name", subLayer.name);
+							$.writeln("Result: " + JSON.stringify(res));
+
 							if (res) {
 								currentColorName = res.color_name;
+							} else {
+								currentColorName = "";
 							}
 
 							if (currentColorName) {
 								path.fillColor = getSwatchColor(currentColorName);
+								$.writeln(subLayer.name + ":" + path.fillColor + "------" + currentColorName);
 							} else {
-								// alert('empty', currentColorName)
+								$.writeln(subLayer.name + "None");
 							}
 						}
 					}
