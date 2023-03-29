@@ -1,6 +1,5 @@
 (function () {
 	//@include "JSXGetURL.0.0.9/JSXGetURL/JSXGetURLLoader.jsx"
-	//@include "json2.js"
 	app.preferences.setBooleanPreference("ShowExternalJSXWarning", false);
 
 	if (!/illustrator/i.test(app.name)) {
