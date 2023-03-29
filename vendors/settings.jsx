@@ -307,7 +307,7 @@
 							var path = paths[s];
 							//  we are using subLayer.name instead of path.name
 							var res = findObjectByProperty(sml, "name", subLayer.name);
-							$.writeln("Result: " + JSON.stringify(res));
+							// $.writeln("Result: " + JSON.stringify(res));
 
 							if (res) {
 								currentColorName = res.color_name;
