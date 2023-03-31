@@ -295,7 +295,7 @@
 				// convert and extract pipings information
 				for (var key in bc.pipings) {
 					pipingsInfo.push(bc.pipings[key]);
-					// combinedParts.push(bc.pipings[key]);
+					
 				}
 			} else {
 				$.writeln("SINGLE");
@@ -308,7 +308,7 @@
 				// convert and extract pipings information
 				for (var key in bc.pipings) {
 					pipingsInfo.push(bc.pipings[key]);
-					// combinedParts.push(bc.pipings[key]);
+					
 				}
 			}
 
@@ -324,7 +324,7 @@
 						pipings.push({ name: pipingFullName, color_name: colorName });
 						combinedParts.push({ name: pipingFullName, color_name: colorName });
 					}
-					$.writeln("Pipings lang" + JSON.stringify(pipings));
+					$.writeln("Pipings Information" + JSON.stringify(pipings));
 				} catch (e) {
 					$.writeln(pipingName + ": " + "color name is Empty");
 				}
