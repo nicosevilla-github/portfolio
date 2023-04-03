@@ -338,7 +338,7 @@
 					try {
 						var paths = subLayer.pageItems[0].pathItems;
 					} catch (e) {
-						$.writeln("error here: " + e);
+							$.writeln("paths error" + ":" + e);
 					}
 					// Check if the sublayer is an instance of the Layer constructor
 					if (subLayer.typename === "Layer") {
