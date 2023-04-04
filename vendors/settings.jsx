@@ -295,7 +295,6 @@
 				// convert and extract pipings information
 				for (var key in bc.pipings) {
 					pipingsInfo.push(bc.pipings[key]);
-					
 				}
 			} else {
 				$.writeln("SINGLE");
@@ -308,7 +307,6 @@
 				// convert and extract pipings information
 				for (var key in bc.pipings) {
 					pipingsInfo.push(bc.pipings[key]);
-					
 				}
 			}
 
@@ -320,13 +318,22 @@
 					for (var p = 0; p < pipingsInfo[i].layers.length; p++) {
 						var colorName = pipingsInfo[i].layers[p].colorObj.name;
 						var pipingIndex = p + 1;
-						var pipingFullName = pipingName + " " + pipingIndex;
-						pipings.push({ name: pipingFullName, color_name: colorName });
-						combinedParts.push({ name: pipingFullName, color_name: colorName });
+						var pipingFullName = pipingName + " " + pipingIndex + " " + pipingsInfo[i].size;
+						pipings.push({
+							name: pipingFullName,
+							color_name: colorName === "None" ? (colorName = "") : colorName,
+							size: pipingsInfo[i].size,
+						});
+						combinedParts.push({
+							name: pipingFullName,
+							color_name: colorName === "None" ? (colorName = "") : colorName,
+							size: pipingsInfo[i].size,
+						});
 					}
-					$.writeln("Pipings Information" + JSON.stringify(pipings));
+					// $.writeln("Pipings Information" + JSON.stringify(pipings));
+					// $.writeln("combinedParts Info" + "=====>" + JSON.stringify(combinedParts));
 				} catch (e) {
-					$.writeln(pipingName + ": " + "color name is Empty");
+					$.writeln(pipingName + ": " + "color name missing");
 				}
 			}
 
@@ -338,11 +345,13 @@
 					try {
 						var paths = subLayer.pageItems[0].pathItems;
 					} catch (e) {
-							$.writeln("paths error" + ":" + e);
+						$.writeln("paths error" + ":" + e);
 					}
+
 					// Check if the sublayer is an instance of the Layer constructor
 					if (subLayer.typename === "Layer") {
 						// subLayer is a layer group
+
 						if (subLayer.layers) {
 							var childLayers = subLayer.layers;
 							for (var i = 0; i < childLayers.length; i++) {
@@ -353,7 +362,7 @@
 									var path = paths[s];
 									//  we are using subLayer.name instead of path.name
 									var res = findObjectByProperty(combinedParts, "name", childLayer.name);
-									// $.writeln("Result: " + JSON.stringify(res));
+									// $.writeln("Result: " + JSON.stringify(res) + "===>" + childLayer.name);
 
 									if (res) {
 										currentColorName = res.color_name;
@@ -361,11 +370,15 @@
 										currentColorName = "";
 									}
 
-									if (currentColorName) {
-										path.fillColor = getSwatchColor(currentColorName);
-										$.writeln(subLayer.name + ":" + path.fillColor + "------" + currentColorName);
-									} else {
-										$.writeln(subLayer.name + "None");
+									try {
+										if (currentColorName) {
+											path.fillColor = getSwatchColor(currentColorName);
+											$.writeln(subLayer.name + ":" + path.fillColor + "------" + currentColorName);
+										} else {
+											$.writeln(subLayer.name + "-" + "None");
+										}
+									} catch (e) {
+										alert("Error in sub grouped layers of" + "-" + childLayer.name);
 									}
 								}
 							}

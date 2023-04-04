@@ -34,6 +34,7 @@
 	var bc;
 	var roster;
 	var sml;
+	var combinedParts = [];
 	var partInfo = [];
 	var currentColorName;
 	var multiple = false;
@@ -210,7 +211,7 @@
 	function getOrderData() {
 		$.writeln("GETTING ORDER DATA...");
 		var url1 =
-			"https://staging-api.prolook.com/api/order_items/search/foid/" +
+			"https://api.prolook.com/api/order_items/search/foid/" +
 			foid.text +
 			"/part_id/" +
 			partId.text;
@@ -288,11 +289,45 @@
 					partInfo.push({ name: item.part, color_name: item.color.name });
 				}
 				sml = partInfo;
+				var pipingsInfo = [];
+				combinedParts = sml;
+
+				// convert and extract pipings information
+				for (var key in bc.pipings) {
+					pipingsInfo.push(bc.pipings[key]);
+					
+				}
 			} else {
 				$.writeln("SINGLE");
 				bc = dataParser(orderData.items.builder_customizations);
 				roster = dataParser(orderData.items.roster);
 				sml = bc.sml;
+				var pipingsInfo = [];
+				combinedParts = sml;
+
+				// convert and extract pipings information
+				for (var key in bc.pipings) {
+					pipingsInfo.push(bc.pipings[key]);
+					
+				}
+			}
+
+			// re construct pipings information to a readable format
+			for (var i = 0; i < pipingsInfo.length; i++) {
+				var pipingName = pipingsInfo[i].name;
+				try {
+					var pipings = [];
+					for (var p = 0; p < pipingsInfo[i].layers.length; p++) {
+						var colorName = pipingsInfo[i].layers[p].colorObj.name;
+						var pipingIndex = p + 1;
+						var pipingFullName = pipingName + " " + pipingIndex;
+						pipings.push({ name: pipingFullName, color_name: colorName });
+						combinedParts.push({ name: pipingFullName, color_name: colorName });
+					}
+					$.writeln("Pipings Information" + JSON.stringify(pipings));
+				} catch (e) {
+					$.writeln(pipingName + ": " + "color name is Empty");
+				}
 			}
 
 			// this is used for AI
@@ -300,13 +335,46 @@
 				for (var x = 0; x < actualLayers.length; x++) {
 					var subLayer = actualLayers[x];
 
+					try {
+						var paths = subLayer.pageItems[0].pathItems;
+					} catch (e) {
+							$.writeln("paths error" + ":" + e);
+					}
 					// Check if the sublayer is an instance of the Layer constructor
 					if (subLayer.typename === "Layer") {
-						var paths = subLayer.pageItems[0].pathItems;
+						// subLayer is a layer group
+						if (subLayer.layers) {
+							var childLayers = subLayer.layers;
+							for (var i = 0; i < childLayers.length; i++) {
+								var childLayer = childLayers[i];
+								var paths = childLayer.pageItems[0].pathItems;
+
+								for (var s = 0; s < paths.length; s++) {
+									var path = paths[s];
+									//  we are using subLayer.name instead of path.name
+									var res = findObjectByProperty(combinedParts, "name", childLayer.name);
+									// $.writeln("Result: " + JSON.stringify(res));
+
+									if (res) {
+										currentColorName = res.color_name;
+									} else {
+										currentColorName = "";
+									}
+
+									if (currentColorName) {
+										path.fillColor = getSwatchColor(currentColorName);
+										$.writeln(subLayer.name + ":" + path.fillColor + "------" + currentColorName);
+									} else {
+										$.writeln(subLayer.name + "None");
+									}
+								}
+							}
+						}
+
 						for (var s = 0; s < paths.length; s++) {
 							var path = paths[s];
 							//  we are using subLayer.name instead of path.name
-							var res = findObjectByProperty(sml, "name", subLayer.name);
+							var res = findObjectByProperty(combinedParts, "name", subLayer.name);
 							// $.writeln("Result: " + JSON.stringify(res));
 
 							if (res) {
