@@ -365,7 +365,16 @@
 									// $.writeln("Result: " + JSON.stringify(res) + "===>" + childLayer.name);
 
 									if (res) {
-										currentColorName = res.color_name;
+										// currentColorName = res.color_name;
+										if(res.color_name === 'Black'){
+											currentColorName = 'BLK'
+										} else if (res.color_name === 'Yellow'){
+											currentColorName = 'YLW'
+										} else {
+											currentColorName = res.color_name;
+										}
+									
+						
 									} else {
 										currentColorName = "";
 									}
@@ -391,7 +400,14 @@
 							// $.writeln("Result: " + JSON.stringify(res));
 
 							if (res) {
-								currentColorName = res.color_name;
+								// currentColorName = res.color_name;
+								if(res.color_name === 'Black'){
+									currentColorName = 'BLK'
+								} else if (res.color_name === 'Yellow'){
+									currentColorName = 'YLW'
+								} else {
+									currentColorName = res.color_name;
+								}
 							} else {
 								currentColorName = "";
 							}
